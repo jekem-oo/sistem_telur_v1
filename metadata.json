@@ -1,0 +1,10 @@
+{
+  "name": "Egg Grading System",
+  "description": "Sistem klasifikasi dan grading kualitas telur berbasis computer vision dan candling sinar merah dengan penyimpanan dataset latih otomatis, visual dasbor, ekspor laporan PDF/CSV, dan sinkronisasi cloud.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
