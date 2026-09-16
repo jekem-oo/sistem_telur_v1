@@ -2,12 +2,15 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Camera, RefreshCw, Upload, Sparkles, CheckCircle2, AlertCircle, Scan, Lightbulb, Zap, Info } from 'lucide-react';
 import { analyzeCandlingCanvas, RealtimeFrameAnalysis, DEFAULT_TUNING_CONFIG } from '../utils/cvAnalyzer';
 import { ModelTuningConfig } from '../types';
+import { Cpu } from 'lucide-react';
 
 interface CameraViewfinderProps {
   onCaptureImage: (imageBase64: string, fastAnalysis?: RealtimeFrameAnalysis) => void;
   isProcessing: boolean;
   onSelectSample: () => void;
   tuningConfig?: ModelTuningConfig;
+  activeModelName?: string;
+  onOpenModelManager?: () => void;
 }
 
 export const CameraViewfinder: React.FC<CameraViewfinderProps> = ({
@@ -15,6 +18,8 @@ export const CameraViewfinder: React.FC<CameraViewfinderProps> = ({
   isProcessing,
   onSelectSample,
   tuningConfig = DEFAULT_TUNING_CONFIG,
+  activeModelName = 'Gemini 3.8 Flash Vision',
+  onOpenModelManager,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -178,6 +183,18 @@ export const CameraViewfinder: React.FC<CameraViewfinderProps> = ({
         </div>
 
         <div className="flex items-center space-x-2">
+          {onOpenModelManager && (
+            <button
+              id="open-model-manager-top-btn"
+              onClick={onOpenModelManager}
+              className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/40 text-rose-300 transition-colors flex items-center space-x-1.5 shadow-sm"
+              title="Ganti atau tambah model AI (model teman / eksternal)"
+            >
+              <Cpu className="w-3.5 h-3.5 text-rose-400" />
+              <span className="truncate max-w-[130px] sm:max-w-[180px]">{activeModelName}</span>
+            </button>
+          )}
+
           <button
             id="toggle-red-light-sim"
             onClick={() => setSimulatedRedLight(!simulatedRedLight)}

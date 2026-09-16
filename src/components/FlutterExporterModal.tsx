@@ -1072,6 +1072,15 @@ export const FlutterExporterModal: React.FC<{ isOpen: boolean; onClose: () => vo
                   <span>Unduh Berkas Ini</span>
                 </button>
                 <a
+                  href="/CATATAN_PANDUAN_FLUTTER.txt"
+                  download="CATATAN_PANDUAN_FLUTTER.txt"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-xs text-amber-300 transition border border-amber-500/40 font-medium"
+                  title="Unduh catatan panduan TXT instalasi Flutter"
+                >
+                  <FileCode className="w-3.5 h-3.5" />
+                  <span>Catatan Panduan (.txt)</span>
+                </a>
+                <a
                   href="/flutter_egg_grading_system.tar.gz"
                   download="flutter_egg_grading_system.tar.gz"
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-xs text-white transition font-semibold shadow-sm"

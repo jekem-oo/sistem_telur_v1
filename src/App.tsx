@@ -13,7 +13,8 @@ import {
   CheckCircle2,
   Sliders,
   FolderUp,
-  Smartphone
+  Smartphone,
+  Cpu
 } from 'lucide-react';
 import { CameraViewfinder } from './components/CameraViewfinder';
 import { InspectionResultModal } from './components/InspectionResultModal';
@@ -24,8 +25,10 @@ import { SampleEggsDrawer } from './components/SampleEggsDrawer';
 import { ModelTuningModal } from './components/ModelTuningModal';
 import { DatasetFolderImportModal } from './components/DatasetFolderImportModal';
 import { FlutterExporterModal } from './components/FlutterExporterModal';
+import { ModelManagerModal } from './components/ModelManagerModal';
 import { SAMPLE_EGGS } from './data/sampleEggs';
-import { EggInspectionData, EggGrade, InspectionStats, CloudSyncConfig, ModelTuningConfig } from './types';
+import { DEFAULT_MODELS, DEFAULT_ENSEMBLE_SETTINGS } from './data/defaultModels';
+import { EggInspectionData, EggGrade, InspectionStats, CloudSyncConfig, ModelTuningConfig, CustomModelDefinition, EnsembleSettings } from './types';
 import { exportToPDF, exportToCSV, exportTrainingDatasetManifest } from './utils/exportReports';
 import { generateLocalFallbackInspection, RealtimeFrameAnalysis, DEFAULT_TUNING_CONFIG } from './utils/cvAnalyzer';
 
@@ -41,6 +44,83 @@ export default function App() {
   const [isTuningModalOpen, setIsTuningModalOpen] = useState(false);
   const [isFolderImportOpen, setIsFolderImportOpen] = useState(false);
   const [isFlutterModalOpen, setIsFlutterModalOpen] = useState(false);
+  const [isModelManagerOpen, setIsModelManagerOpen] = useState(false);
+
+  // Model Management State
+  const [models, setModels] = useState<CustomModelDefinition[]>(() => {
+    try {
+      const saved = localStorage.getItem('egg_models_registry');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return DEFAULT_MODELS;
+  });
+
+  const [activeModelId, setActiveModelId] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('egg_active_model_id');
+      if (saved) return saved;
+    } catch (e) {}
+    return 'model-gemini-flash';
+  });
+
+  const [ensembleSettings, setEnsembleSettings] = useState<EnsembleSettings>(() => {
+    try {
+      const saved = localStorage.getItem('egg_ensemble_settings');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return DEFAULT_ENSEMBLE_SETTINGS;
+  });
+
+  const activeModel = useMemo(() => {
+    return models.find((m) => m.id === activeModelId) || models[0] || DEFAULT_MODELS[0];
+  }, [models, activeModelId]);
+
+  // Persist models, active model, and ensemble settings
+  useEffect(() => {
+    try {
+      localStorage.setItem('egg_models_registry', JSON.stringify(models));
+    } catch (e) {}
+  }, [models]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('egg_active_model_id', activeModelId);
+    } catch (e) {}
+  }, [activeModelId]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('egg_ensemble_settings', JSON.stringify(ensembleSettings));
+    } catch (e) {}
+  }, [ensembleSettings]);
+
+  // Model management actions
+  const handleAddNewModel = (newModel: CustomModelDefinition) => {
+    setModels((prev) => [newModel, ...prev]);
+    setActiveModelId(newModel.id);
+    showToast(`Model baru "${newModel.name}" berhasil didaftarkan!`);
+    // Sync to server model registry
+    fetch('/api/models', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newModel),
+    }).catch(console.warn);
+  };
+
+  const handleDeleteModel = (id: string) => {
+    setModels((prev) => prev.filter((m) => m.id !== id));
+    if (activeModelId === id) {
+      setActiveModelId('model-gemini-flash');
+    }
+    showToast('Model berhasil dihapus.');
+    fetch(`/api/models/${id}`, { method: 'DELETE' }).catch(console.warn);
+  };
+
+  const handleToggleModelActive = (id: string, active: boolean) => {
+    setModels((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, isActive: active } : m))
+    );
+  };
 
   // Model Tuning Configuration State (Persisted in localStorage)
   const [tuningConfig, setTuningConfig] = useState<ModelTuningConfig>(() => {
@@ -225,6 +305,11 @@ export default function App() {
           imageBase64,
           clientFastAnalysis: fastAnalysis,
           tuningConfig,
+          activeModelId: activeModel.id,
+          activeModelName: activeModel.name,
+          externalEndpointUrl: activeModel.endpointUrl,
+          apiAuthHeader: activeModel.apiAuthHeader,
+          ensembleMode: ensembleSettings.mode === 'ensemble_consensus',
         }),
       });
 
@@ -336,6 +421,16 @@ export default function App() {
 
           {/* Model Status, Tuning Button & Pending Sync indicator */}
           <div className="flex items-center space-x-2">
+            <button
+              id="btn-open-model-manager-header"
+              onClick={() => setIsModelManagerOpen(true)}
+              className="px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all shadow-sm"
+              title="Kelola model AI, impor bobot model (.pt/.onnx/.tflite) buatan rekan, atau hubungkan endpoint API"
+            >
+              <Cpu className="w-3.5 h-3.5 text-rose-400" />
+              <span>Model AI: {activeModel.name.split(' ')[0]}</span>
+            </button>
+
             <button
               id="btn-open-flutter-exporter"
               onClick={() => setIsFlutterModalOpen(true)}
@@ -476,6 +571,8 @@ export default function App() {
                 isProcessing={isProcessing}
                 onSelectSample={() => setIsSampleDrawerOpen(true)}
                 tuningConfig={tuningConfig}
+                activeModelName={activeModel.name}
+                onOpenModelManager={() => setIsModelManagerOpen(true)}
               />
             </div>
 
@@ -522,6 +619,7 @@ export default function App() {
             onExportDataset={() => exportTrainingDatasetManifest(dataset)}
             onSelectEgg={(egg) => setCurrentInspection(egg)}
             onImportUserDataset={handleImportUserDataset}
+            onOpenModelManager={() => setIsModelManagerOpen(true)}
           />
         )}
 
@@ -578,6 +676,27 @@ export default function App() {
       <FlutterExporterModal
         isOpen={isFlutterModalOpen}
         onClose={() => setIsFlutterModalOpen(false)}
+      />
+
+      {/* Modal: Model Manager (Model Rekan / Eksternal / Ensemble) */}
+      <ModelManagerModal
+        isOpen={isModelManagerOpen}
+        onClose={() => setIsModelManagerOpen(false)}
+        models={models}
+        activeModelId={activeModelId}
+        onSelectActiveModel={(id) => {
+          setActiveModelId(id);
+          const found = models.find((m) => m.id === id);
+          if (found) showToast(`Model aktif diubah ke: ${found.name}`);
+        }}
+        onToggleModelActive={handleToggleModelActive}
+        onAddNewModel={handleAddNewModel}
+        onDeleteModel={handleDeleteModel}
+        ensembleSettings={ensembleSettings}
+        onUpdateEnsembleSettings={(settings) => {
+          setEnsembleSettings(settings);
+          showToast(`Mode inference diperbarui: ${settings.mode}`);
+        }}
       />
 
       {/* Footer */}

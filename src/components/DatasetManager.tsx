@@ -27,6 +27,7 @@ interface DatasetManagerProps {
   onExportDataset: () => void;
   onSelectEgg: (egg: EggInspectionData) => void;
   onImportUserDataset?: (eggs: EggInspectionData[]) => void;
+  onOpenModelManager?: () => void;
 }
 
 export const DatasetManager: React.FC<DatasetManagerProps> = ({
@@ -36,6 +37,7 @@ export const DatasetManager: React.FC<DatasetManagerProps> = ({
   onExportDataset,
   onSelectEgg,
   onImportUserDataset,
+  onOpenModelManager,
 }) => {
   const [filterGrade, setFilterGrade] = useState<string>('all');
   const [filterVerified, setFilterVerified] = useState<string>('all');
@@ -148,6 +150,18 @@ export const DatasetManager: React.FC<DatasetManagerProps> = ({
               <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
               <span>Preset Grade D (Reject)</span>
             </button>
+
+            {onOpenModelManager && (
+              <button
+                id="btn-open-model-manager-dataset"
+                onClick={onOpenModelManager}
+                className="px-3.5 py-2 bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 rounded-xl text-xs font-bold border border-purple-500/40 transition-all flex items-center space-x-1.5 shadow-sm"
+                title="Kelola model buatan rekan/teman & model eksternal"
+              >
+                <Cpu className="w-4 h-4 text-purple-400" />
+                <span>Kelola Model AI Teman / Eksternal</span>
+              </button>
+            )}
 
             <button
               id="btn-import-dataset-folder"

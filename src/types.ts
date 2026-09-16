@@ -34,7 +34,7 @@ export interface EggInspectionData {
   defects: string[]; // e.g. ['Hairline crack', 'Blood spot', 'Large air cell']
   
   // Model & Architecture Metadata
-  inferenceEngine: 'Gemini-Vision-Hybrid' | 'Edge-YOLO-CV';
+  inferenceEngine: string; // e.g. 'Gemini-Vision-Hybrid', 'Edge-YOLO-CV', or Custom External Model Name
   inferenceLatencyMs: number;
   yoloBbox?: [number, number, number, number]; // [x_center, y_center, width, height] normalized 0-1
   modelRecommendation: string;
@@ -67,4 +67,41 @@ export interface CloudSyncConfig {
   syncStatus: 'idle' | 'syncing' | 'success' | 'error';
   targetProvider: 'Google Cloud Storage' | 'AWS S3' | 'Custom Server DB';
   pendingQueueCount: number;
+}
+
+export type ModelType = 
+  | 'gemini'             // Google Gemini Flash Vision API
+  | 'edge_cv'            // Local Client Edge Computer Vision & Hough Meniscus
+  | 'external_api'       // External HTTP REST Endpoint (Flask/FastAPI/Triton/Roboflow)
+  | 'custom_weights'     // Uploaded ONNX / TensorFlow.js / PyTorch weights manifest
+  | 'ensemble';          // Multi-model consensus voter
+
+export interface CustomModelDefinition {
+  id: string;
+  name: string;
+  version: string;
+  type: ModelType;
+  description: string;
+  author: string; // e.g., 'Teman Peneliti / Rekan Tim', 'Bawaan Sistem', etc.
+  accuracyScore: number; // e.g. 96.4%
+  isActive: boolean;
+  isBuiltIn: boolean;
+  createdAt: number;
+  lastTrainedDate?: string;
+  endpointUrl?: string; // For external_api
+  apiAuthHeader?: string; // Optional Bearer token or API key
+  modelWeightFileUrl?: string; // For uploaded model weights/manifest
+  weightSizeMb?: number;
+  classesSupported: EggGrade[];
+  inputResolution?: string; // e.g. '640x640'
+  votingWeight: number; // 1 - 5 for ensemble combination
+  trainingEpochs?: number;
+  batchSize?: number;
+  notes?: string;
+}
+
+export interface EnsembleSettings {
+  mode: 'single_active' | 'ensemble_consensus' | 'cascade_fallback';
+  confidenceThreshold: number; // minimum confidence to accept single model before fallback
+  autoRetrainTriggerCount: number; // trigger retraining alert when N new verified eggs added
 }

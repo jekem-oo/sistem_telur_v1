@@ -1,0 +1,169 @@
+==============================================================================
+PANDUAN LENGKAP MENJALANKAN SISTEM GRADING TELUR BERBASIS FLUTTER & AI GEMINI
+(Sistem Klasifikasi Kualitas Telur Candling Sinar Merah SNI 3926:2008 & USDA)
+==============================================================================
+
+Selamat datang di kode sumber resmi Flutter untuk Sistem Grading Mutu Telur.
+Aplikasi ini mendukung platform Android, iOS, Windows, macOS, dan Web.
+
+------------------------------------------------------------------------------
+1. PRASYARAT SISTEM
+------------------------------------------------------------------------------
+Sebelum memulai, pastikan perangkat Anda telah terpasang:
+- Flutter SDK (Versi >= 3.19.0 disarankan)
+  Cek dengan perintah: flutter --version
+- Dart SDK (Versi >= 3.0.0)
+- Android Studio / VS Code dengan ekstensi Flutter & Dart
+- Perangkat Android fisik atau Emulator dengan kamera aktif
+- Google Gemini API Key (Bisa didapatkan gratis di https://aistudio.google.com/)
+
+------------------------------------------------------------------------------
+2. STRUKTUR FOLDER PROYEK
+------------------------------------------------------------------------------
+flutter_app/
+│
+├── pubspec.yaml                 <- Daftar paket dependensi (kamera, AI, grafik)
+├── CATATAN_PANDUAN_FLUTTER.txt  <- Berkas petunjuk ini
+│
+├── assets/
+│   ├── samples/                 <- Contoh citra telur candling sinar merah
+│   └── audio/                   <- Suara beeper verifikasi (opsional)
+│
+└── lib/
+    ├── main.dart                <- Titik masuk aplikasi, navigasi tab & tema
+    │
+    ├── models/
+    │   ├── egg_inspection.dart  <- Model data inspeksi & logika taksonomi Grade A-D
+    │   └── tuning_config.dart   <- Konfigurasi sensitivitas deteksi & ambang batas
+    │
+    ├── services/
+    │   ├── gemini_classifier_service.dart <- Integrasi Google Gemini 1.5 Flash Vision
+    │   └── dataset_storage_service.dart   <- Penyimpanan offline riwayat & ekspor CSV
+    │
+    ├── screens/
+    │   ├── candling_camera_screen.dart    <- Kamera real-time & reticle candler
+    │   ├── dashboard_stats_screen.dart    <- Dasbor statistik FL Chart & metrik mutu
+    │   ├── dataset_history_screen.dart    <- Galeri riwayat dataset & ground truth
+    │   └── model_tuning_screen.dart       <- Kalibrasi ambang kantung udara & sensor
+    │
+    └── widgets/
+        ├── inspection_result_sheet.dart   <- Modal rincian hasil inspeksi telur
+        ├── egg_defect_badge.dart          <- Komponen lencana cacat & retak rambut
+        └── sample_eggs_drawer.dart        <- Lemari sampel cepat untuk pengujian
+
+
+------------------------------------------------------------------------------
+3. LANGKAH-LANGKAH MENJALANKAN APLIKASI
+------------------------------------------------------------------------------
+
+Langkah 1: Masuk ke direktori proyek
+  Buka Terminal / Command Prompt lalu jalankan:
+  cd flutter_app
+
+Langkah 2: Ambil semua dependensi library
+  flutter pub get
+
+Langkah 3: Hubungkan HP Android / Buka Emulator
+  Pastikan perangkat Anda terdeteksi dengan perintah:
+  flutter devices
+
+Langkah 4: Jalankan aplikasi dengan memasukkan API Key Gemini
+  Ganti 'MASUKKAN_GEMINI_API_KEY_ANDA' dengan kunci API Anda dari Google AI Studio:
+
+  flutter run --dart-define=GEMINI_API_KEY=MASUKKAN_GEMINI_API_KEY_ANDA
+
+  Catatan untuk pengguna VS Code / Android Studio:
+  Anda juga dapat mengatur --dart-define di file launch.json atau Run Configuration.
+
+------------------------------------------------------------------------------
+4. KONFIGURASI IZIN KAMERA (PENTING!)
+------------------------------------------------------------------------------
+
+A. Untuk Android:
+   Pastikan file 'android/app/src/main/AndroidManifest.xml' memiliki baris berikut
+   di dalam tag <manifest>:
+   
+   <uses-permission android:name="android.permission.CAMERA" />
+   <uses-permission android:name="android.permission.INTERNET" />
+   <uses-feature android:name="android.hardware.camera" />
+   <uses-feature android:name="android.hardware.camera.autofocus" />
+
+B. Untuk iOS:
+   Buka 'ios/Runner/Info.plist' dan tambahkan baris berikut di dalam <dict>:
+
+   <key>NSCameraUsageDescription</key>
+   <string>Aplikasi memerlukan akses kamera untuk menganalisa citra candling telur.</string>
+   <key>NSMicrophoneUsageDescription</key>
+   <string>Aplikasi tidak menggunakan mikrofon.</string>
+
+------------------------------------------------------------------------------
+5. LOGIKA ATURAN MUTU & TAKSONOMI TELUR (SNI 3926:2008)
+------------------------------------------------------------------------------
+Aplikasi mengimplementasikan kaidah evaluasi:
+
+1. GRADE A (Sangat Segar):
+   - Kedalaman kantung udara <= 3.5 mm
+   - Cangkang mulus utuh tanpa noda atau retakan
+   - Kuning telur berada tepat di tengah (sentris)
+   - Transmisi sinar merah 640nm tembus sempurna tanpa bayangan gelap
+
+2. GRADE B (Segar / Konsumsi):
+   - Kedalaman kantung udara 3.5 mm s/d 6.0 mm
+   - Kuning telur agak bergeser dari tengah tapi masih mobile bebas
+   - Layak konsumsi dapur atau rumah tangga
+
+3. GRADE C (Pengolahan / Industri):
+   - Kedalaman kantung udara 6.0 mm s/d 9.0 mm
+   - Kuning telur bergerak bebas menyentuh dinding cangkang
+   - Peruntukan industri roti, kue, atau pakan
+
+4. GRADE D (AFKIR / REJECT - MUTLAK):
+   - PERATURAN MUTLAK: Bila ada retak rambut (hairline crack), retak bocor,
+     noda darah (blood spot / meat spot), cincin embrio mati (blood ring),
+     kantung udara > 9.0 mm, cangkang abnormal kalsium, atau busuk,
+     MAKA STATUS MUTLAK ADALAH GRADE D (AFKIR).
+   - Selain kriteria Grade A, Grade B, dan Grade C -> MUTLAK GRADE D.
+
+------------------------------------------------------------------------------
+6. PANDUAN MENAMBAHKAN MODEL BUATAN TEMAN / MODEL EKSTERNAL (YOLO / API / TFLITE)
+------------------------------------------------------------------------------
+Sistem ini dirancang sangat fleksibel dan kolaboratif. Jika temanmu sedang
+melatih model (misalnya YOLOv8, YOLOv10, ResNet, atau EfficientNet) untuk
+deteksi candling telur sinar merah, sistem ini dapat langsung diintegrasikan:
+
+1. Cara 1: Menggunakan REST API Eksternal (Python FastAPI / Flask):
+   - Temanmu cukup menjalankan server inferensi lokal di komputernya:
+     POST http://<IP_KOMPUTER_TEMAN>:8000/predict
+   - Di menu aplikasi ("Kelola Model AI" -> "Hubungkan Model Eksternal"),
+     masukkan URL tersebut.
+   - Sistem akan mengirimkan citra base64 dan menerima hasil Grade A/B/C/D.
+
+2. Cara 2: Memasukkan Bobot Model (.tflite / .onnx) Langsung ke Flutter:
+   - Minta file bobot model hasil training temanmu:
+     Contoh: yolo_egg_candler.tflite
+   - Masukkan ke folder: flutter_app/assets/models/
+   - Daftarkan di pubspec.yaml:
+       assets:
+         - assets/models/yolo_egg_candler.tflite
+   - Gunakan paket `tflite_flutter` untuk menjalankan inferensi 100% offline
+     di HP Android/iOS tanpa internet.
+
+3. Cara 3: Mode Konsensus (Ensemble Voting):
+   - Aktifkan "Mode Konsensus (Ensemble)" di menu Kelola Model.
+   - Sistem akan menggabungkan suara dari Model Gemini + Model Temanmu + Model Edge CV.
+   - Hasil grading adalah kelas dengan akumulasi bobot suara tertinggi,
+     menghasilkan akurasi mendekati 100% sempurna!
+
+------------------------------------------------------------------------------
+7. EKSPOR DATASET & LAPORAN
+------------------------------------------------------------------------------
+- Menu Riwayat Dataset memungkinkan Anda mengekspor seluruh rekaman inspeksi
+  ke format CSV, Manifest JSON, dan paket YOLOv8 (data.yaml + txt labels)
+  untuk pelatihan ulang model temanmu (Retraining AI).
+- Fitur "Human-in-the-Loop" memungkinkan pakar mengoreksi prediksi AI dan
+  menyimpan label sebenarnya (Ground Truth Label).
+
+------------------------------------------------------------------------------
+Selamat menggunakan Sistem Grading Telur Candling Flutter!
+Dibuat untuk peternak, industri pangan, dan kolaborasi peneliti AI telur modern.
+==============================================================================
