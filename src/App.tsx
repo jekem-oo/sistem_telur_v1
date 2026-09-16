@@ -395,103 +395,98 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-rose-500 selection:text-white">
+    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col selection:bg-stone-200 selection:text-stone-900 font-sans">
       {/* Top Application Header */}
-      <header className="sticky top-0 z-40 bg-zinc-950/85 backdrop-blur-md border-b border-zinc-800/80">
+      <header className="sticky top-0 z-40 bg-stone-950/90 backdrop-blur-md border-b border-stone-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Brand & Title */}
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center shadow-lg shadow-rose-950/50 border border-rose-400/30">
-              <span className="text-white font-black text-base">E</span>
+            <div className="w-9 h-9 rounded-xl bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-400 font-bold shadow-sm">
+              <span className="font-display text-sm tracking-tighter">OV</span>
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-sm sm:text-base font-bold text-white tracking-tight">
-                  Egg Grading System
+                <h1 className="text-sm sm:text-base font-bold text-stone-100 font-display">
+                  Sistem Candling Telur
                 </h1>
-                <span className="hidden sm:inline-block px-2 py-0.5 bg-rose-950/70 border border-rose-700/50 text-rose-300 rounded text-[10px] font-mono font-semibold">
-                  Candling Sinar Merah
+                <span className="hidden sm:inline-block px-2 py-0.5 bg-stone-800 border border-stone-700 text-stone-300 rounded text-[10px] font-mono">
+                  SNI 3926:2008
                 </span>
               </div>
-              <p className="text-[11px] text-zinc-400 hidden sm:block">
-                Standarisasi Mutu Telur SNI 3926:2008 & Training Dataset Collector
+              <p className="text-[11px] text-stone-400 hidden sm:block">
+                Evaluasi Mutu Ovoskopi Sinar Merah & Manajemen Dataset Latih AI
               </p>
             </div>
           </div>
 
-          {/* Model Status, Tuning Button & Pending Sync indicator */}
+          {/* Model Status, Tuning Button & Quick Actions */}
           <div className="flex items-center space-x-2">
             <button
               id="btn-open-model-manager-header"
               onClick={() => setIsModelManagerOpen(true)}
-              className="px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all shadow-sm"
+              className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all shadow-sm"
               title="Kelola model AI, impor bobot model (.pt/.onnx/.tflite) buatan rekan, atau hubungkan endpoint API"
             >
-              <Cpu className="w-3.5 h-3.5 text-rose-400" />
-              <span>Model AI: {activeModel.name.split(' ')[0]}</span>
+              <Cpu className="w-3.5 h-3.5 text-amber-400" />
+              <span className="max-w-[120px] truncate">Model: {activeModel.name.split(' ')[0]}</span>
             </button>
 
             <button
               id="btn-open-flutter-exporter"
               onClick={() => setIsFlutterModalOpen(true)}
-              className="px-3 py-1.5 bg-cyan-950/60 hover:bg-cyan-900/60 text-cyan-300 border border-cyan-700/50 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all shadow-sm"
+              className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all shadow-sm"
               title="Lihat dan ekspor seluruh kode sumber sistem telur ke proyek Flutter (Dart)"
             >
-              <Smartphone className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Kode Flutter</span>
+              <Smartphone className="w-3.5 h-3.5 text-stone-400" />
+              <span className="hidden sm:inline">Kode Flutter</span>
             </button>
 
             <button
               id="btn-open-folder-import-header"
               onClick={() => setIsFolderImportOpen(true)}
-              className="px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all shadow-sm"
+              className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all shadow-sm"
               title="Impor folder foto telur bergradasi dari Google Drive atau komputer lokal"
             >
-              <FolderUp className="w-3.5 h-3.5 text-rose-400" />
-              <span>Impor Folder</span>
+              <FolderUp className="w-3.5 h-3.5 text-stone-400" />
+              <span className="hidden sm:inline">Impor Folder</span>
             </button>
 
             <button
               id="btn-open-model-tuning"
               onClick={() => setIsTuningModalOpen(true)}
-              className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700/80 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all shadow-sm"
-              title="Sesuaikan sensitivitas deteksi retak, ambang kantung udara, dan kalibrasi panjang gelombang sinar merah"
+              className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all shadow-sm"
+              title="Sesuaikan ambang batas kantung udara dan kalibrasi kriteria"
             >
-              <Sliders className="w-3.5 h-3.5 text-rose-400" />
-              <span>Tuning Model</span>
+              <Sliders className="w-3.5 h-3.5 text-stone-400" />
+              <span className="hidden md:inline">Kalibrasi</span>
             </button>
-
-            <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 bg-zinc-900/90 border border-zinc-800 rounded-lg text-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-zinc-300 font-medium">Model: YOLOv8 + Gemini AI</span>
-            </div>
 
             {pendingSyncCount > 0 && (
               <button
                 onClick={() => setActiveTab('cloud')}
-                className="px-2.5 py-1.5 bg-amber-950/60 border border-amber-700/40 hover:bg-amber-900/60 text-amber-300 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-colors"
+                className="px-2.5 py-1.5 bg-stone-800 border border-stone-700 hover:bg-stone-700 text-amber-300 rounded-xl text-xs font-medium flex items-center space-x-1.5 transition-colors"
                 title={`${pendingSyncCount} telur belum disinkronkan ke cloud`}
               >
-                <Cloud className="w-3.5 h-3.5 animate-bounce" />
-                <span>{pendingSyncCount} Sync</span>
+                <Cloud className="w-3.5 h-3.5" />
+                <span>{pendingSyncCount}</span>
               </button>
             )}
           </div>
         </div>
 
         {/* Navigation Tabs Bar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex space-x-1 sm:space-x-2 overflow-x-auto no-scrollbar border-t border-zinc-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex space-x-1 sm:space-x-2 overflow-x-auto no-scrollbar border-t border-stone-900">
           <button
             id="tab-camera"
             onClick={() => setActiveTab('camera')}
             className={`px-4 py-2.5 text-xs font-semibold border-b-2 transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'camera'
-                ? 'border-rose-500 text-rose-400 bg-rose-500/5'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
+                ? 'border-stone-200 text-stone-100'
+                : 'border-transparent text-stone-400 hover:text-stone-200'
             }`}
           >
             <Camera className="w-4 h-4" />
-            <span>Kamera Candling</span>
+            <span>Kamera Ovoskopi</span>
           </button>
 
           <button
@@ -499,12 +494,12 @@ export default function App() {
             onClick={() => setActiveTab('dashboard')}
             className={`px-4 py-2.5 text-xs font-semibold border-b-2 transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'dashboard'
-                ? 'border-rose-500 text-rose-400 bg-rose-500/5'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
+                ? 'border-stone-200 text-stone-100'
+                : 'border-transparent text-stone-400 hover:text-stone-200'
             }`}
           >
             <BarChart3 className="w-4 h-4" />
-            <span>Dasbor Visual ({dataset.length})</span>
+            <span>Dasbor Rekapitulasi ({dataset.length})</span>
           </button>
 
           <button
@@ -512,8 +507,8 @@ export default function App() {
             onClick={() => setActiveTab('dataset')}
             className={`px-4 py-2.5 text-xs font-semibold border-b-2 transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'dataset'
-                ? 'border-rose-500 text-rose-400 bg-rose-500/5'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
+                ? 'border-stone-200 text-stone-100'
+                : 'border-transparent text-stone-400 hover:text-stone-200'
             }`}
           >
             <Database className="w-4 h-4" />
@@ -525,19 +520,19 @@ export default function App() {
             onClick={() => setActiveTab('cloud')}
             className={`px-4 py-2.5 text-xs font-semibold border-b-2 transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'cloud'
-                ? 'border-rose-500 text-rose-400 bg-rose-500/5'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
+                ? 'border-stone-200 text-stone-100'
+                : 'border-transparent text-stone-400 hover:text-stone-200'
             }`}
           >
             <Cloud className="w-4 h-4" />
-            <span>Sinkronisasi Cloud</span>
+            <span>Cadangan Cloud</span>
           </button>
         </div>
       </header>
 
       {/* Toast Notification Alert */}
       {toastNotification && (
-        <div className="fixed bottom-6 right-6 z-50 bg-zinc-900 border border-zinc-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2.5 text-xs animate-in fade-in slide-in-from-bottom-3 duration-200">
+        <div className="fixed bottom-6 right-6 z-50 bg-stone-900 border border-stone-700 text-stone-100 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2.5 text-xs animate-in fade-in slide-in-from-bottom-3 duration-200">
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           <span className="font-medium">{toastNotification}</span>
         </div>
@@ -548,19 +543,19 @@ export default function App() {
         {activeTab === 'camera' && (
           <div className="space-y-6">
             {/* Quick Helper Banner */}
-            <div className="p-4 bg-zinc-900/70 border border-zinc-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
               <div className="flex items-center space-x-2.5">
-                <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                <span className="text-zinc-300">
-                  <strong>Instruksi Operasional:</strong> Letakkan telur di atas lubang bulat sinar merah candler. Sistem otomatis mendeteksi kantung udara dan memeriksa keretakan cangkang.
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <span className="text-stone-300">
+                  <strong>Panduan Kerja:</strong> Posisikan telur tepat di lubang fokus candler. Evaluasi kedalaman kantung udara dan kontinuitas cangkang dilakukan seketika secara non-destruktif.
                 </span>
               </div>
               <button
                 id="btn-open-samples-banner"
                 onClick={() => setIsSampleDrawerOpen(true)}
-                className="text-rose-400 hover:text-rose-300 font-semibold underline underline-offset-2 shrink-0"
+                className="text-amber-400 hover:text-amber-300 font-semibold underline underline-offset-2 shrink-0"
               >
-                Coba dengan Sampel Telur →
+                Uji Sampel Standar →
               </button>
             </div>
 
@@ -578,21 +573,21 @@ export default function App() {
 
             {/* Quick Metrics Bar below camera */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
-              <div className="p-3 bg-zinc-900 border border-zinc-800/80 rounded-xl text-center">
-                <span className="text-[11px] text-zinc-400 block">Grade A (Prima)</span>
-                <span className="text-lg font-bold text-emerald-400">{stats.gradeACount}</span>
+              <div className="p-3 bg-stone-900 border border-stone-800 rounded-xl text-center">
+                <span className="text-[11px] text-stone-400 block font-medium">Grade A (Prima)</span>
+                <span className="text-lg font-bold text-emerald-400 font-display">{stats.gradeACount}</span>
               </div>
-              <div className="p-3 bg-zinc-900 border border-zinc-800/80 rounded-xl text-center">
-                <span className="text-[11px] text-zinc-400 block">Grade B (Segar)</span>
-                <span className="text-lg font-bold text-blue-400">{stats.gradeBCount}</span>
+              <div className="p-3 bg-stone-900 border border-stone-800 rounded-xl text-center">
+                <span className="text-[11px] text-stone-400 block font-medium">Grade B (Konsumsi)</span>
+                <span className="text-lg font-bold text-amber-400 font-display">{stats.gradeBCount}</span>
               </div>
-              <div className="p-3 bg-zinc-900 border border-zinc-800/80 rounded-xl text-center">
-                <span className="text-[11px] text-zinc-400 block">Grade C (Olahan)</span>
-                <span className="text-lg font-bold text-amber-400">{stats.gradeCCount}</span>
+              <div className="p-3 bg-stone-900 border border-stone-800 rounded-xl text-center">
+                <span className="text-[11px] text-stone-400 block font-medium">Grade C (Olahan)</span>
+                <span className="text-lg font-bold text-orange-400 font-display">{stats.gradeCCount}</span>
               </div>
-              <div className="p-3 bg-zinc-900 border border-zinc-800/80 rounded-xl text-center">
-                <span className="text-[11px] text-zinc-400 block">Grade D (Reject)</span>
-                <span className="text-lg font-bold text-rose-400">{stats.gradeDCount}</span>
+              <div className="p-3 bg-stone-900 border border-stone-800 rounded-xl text-center">
+                <span className="text-[11px] text-stone-400 block font-medium">Grade D (Afkir)</span>
+                <span className="text-lg font-bold text-red-400 font-display">{stats.gradeDCount}</span>
               </div>
             </div>
           </div>

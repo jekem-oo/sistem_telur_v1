@@ -6,14 +6,16 @@ import {
   Cloud, 
   CheckCircle, 
   AlertOctagon, 
-  Calendar, 
   FileText, 
-  ShieldAlert, 
-  Zap, 
-  ArrowUpRight, 
-  Filter 
+  ShieldCheck,
+  ChevronRight,
+  TrendingUp,
+  AlertTriangle,
+  Scale,
+  Sparkles
 } from 'lucide-react';
 import { EggInspectionData, InspectionStats } from '../types';
+import { GradeStampBadge } from './GradeStampBadge';
 
 interface DashboardViewProps {
   items: EggInspectionData[];
@@ -43,16 +45,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const gradeDPercent = Math.round((stats.gradeDCount / total) * 100);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto">
       {/* Action Toolbar Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-zinc-900 border border-zinc-800 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-stone-900 border border-stone-800 rounded-2xl shadow-sm">
         <div>
-          <h2 className="text-base font-bold text-white flex items-center space-x-2">
-            <BarChart3 className="w-4 h-4 text-rose-500" />
-            <span>Dasbor Pemantauan Statistik Kualitas Telur (Grade A - D)</span>
-          </h2>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            Evaluasi real-time berbasis candling sinar merah (630-660nm) & model klasifikasi deep learning
+          <div className="flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-stone-100 font-display">
+              Dasbor Mutu Telur Ovoskopi
+            </h2>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-stone-800 border border-stone-700 text-amber-300 font-mono">
+              Batch Harian
+            </span>
+          </div>
+          <p className="text-xs text-stone-400 mt-1">
+            Rekapitulasi pemeriksaan fisik sinar merah (640nm) berdasarkan SNI 3926:2008 & basis data pelatihan
           </p>
         </div>
 
@@ -61,112 +67,112 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <button
             id="btn-export-pdf-report"
             onClick={onExportPDF}
-            className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white rounded-lg text-xs font-semibold border border-zinc-700 transition-all flex items-center space-x-1.5 shadow-sm"
+            className="px-3.5 py-2 bg-stone-800 hover:bg-stone-700/90 text-stone-200 rounded-xl text-xs font-semibold border border-stone-700 transition-all flex items-center space-x-1.5 shadow-sm"
             title="Unduh Laporan Sertifikasi PDF Resmi"
           >
-            <FileText className="w-3.5 h-3.5 text-rose-400" />
+            <FileText className="w-3.5 h-3.5 text-stone-300" />
             <span>Laporan PDF</span>
           </button>
 
           <button
             id="btn-export-csv-data"
             onClick={onExportCSV}
-            className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white rounded-lg text-xs font-semibold border border-zinc-700 transition-all flex items-center space-x-1.5 shadow-sm"
+            className="px-3.5 py-2 bg-stone-800 hover:bg-stone-700/90 text-stone-200 rounded-xl text-xs font-semibold border border-stone-700 transition-all flex items-center space-x-1.5 shadow-sm"
             title="Ekspor Data Mentah CSV"
           >
-            <FileDown className="w-3.5 h-3.5 text-emerald-400" />
+            <FileDown className="w-3.5 h-3.5 text-stone-300" />
             <span>Ekspor CSV</span>
           </button>
 
           <button
             id="btn-export-yolo-dataset"
             onClick={onExportDataset}
-            className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white rounded-lg text-xs font-semibold border border-zinc-700 transition-all flex items-center space-x-1.5 shadow-sm"
+            className="px-3.5 py-2 bg-stone-800 hover:bg-stone-700/90 text-stone-200 rounded-xl text-xs font-semibold border border-stone-700 transition-all flex items-center space-x-1.5 shadow-sm"
             title="Download Paket Data Latih YOLO & EfficientNet"
           >
-            <Database className="w-3.5 h-3.5 text-blue-400" />
-            <span>Dataset YOLO</span>
+            <Database className="w-3.5 h-3.5 text-amber-400" />
+            <span>Paket Dataset Latih</span>
           </button>
 
           <button
             id="btn-sync-cloud-fast"
             onClick={onTriggerCloudSync}
-            className="px-3 py-1.5 bg-rose-600/90 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold shadow-md shadow-rose-950/30 transition-all flex items-center space-x-1.5"
+            className="px-4 py-2 bg-stone-100 hover:bg-white text-stone-900 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm"
             title="Sinkronisasikan ke Penyimpanan Cloud"
           >
-            <Cloud className="w-3.5 h-3.5" />
-            <span>Sync Cloud</span>
+            <Cloud className="w-3.5 h-3.5 text-stone-900" />
+            <span>Cadangkan Cloud</span>
           </button>
         </div>
       </div>
 
       {/* Primary KPI Metric Cards: Grade A, B, C, D */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-        {/* Grade A (Prima) */}
-        <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl relative overflow-hidden">
-          <div className="flex items-center justify-between text-zinc-400 text-xs mb-1">
-            <span>Grade A (Prima)</span>
-            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+        {/* Grade A */}
+        <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl relative overflow-hidden">
+          <div className="flex items-center justify-between text-stone-400 text-xs mb-1.5">
+            <span className="font-semibold text-stone-300">Grade A (Prima)</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
           </div>
-          <div className="text-2xl font-black text-emerald-400">
+          <div className="text-2xl sm:text-3xl font-bold font-display text-emerald-400">
             {stats.gradeACount}
-            <span className="text-xs font-normal text-zinc-500 ml-1">
+            <span className="text-xs font-normal text-stone-400 ml-1.5 font-sans">
               ({stats.totalInspected > 0 ? gradeAPercent : 0}%)
             </span>
           </div>
-          <div className="mt-2 text-[11px] text-zinc-400 flex items-center space-x-1">
-            <span>Kantung &lt; 3.5mm • Sangat segar</span>
+          <div className="mt-2 text-[11px] text-stone-400">
+            Kantung &le; 3.5mm • Sangat Segar
           </div>
         </div>
 
-        {/* Grade B (Segar) */}
-        <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl relative overflow-hidden">
-          <div className="flex items-center justify-between text-zinc-400 text-xs mb-1">
-            <span>Grade B (Segar Konsumsi)</span>
-            <span className="w-2 h-2 rounded-full bg-blue-400" />
+        {/* Grade B */}
+        <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl relative overflow-hidden">
+          <div className="flex items-center justify-between text-stone-400 text-xs mb-1.5">
+            <span className="font-semibold text-stone-300">Grade B (Konsumsi)</span>
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
           </div>
-          <div className="text-2xl font-black text-blue-400">
+          <div className="text-2xl sm:text-3xl font-bold font-display text-amber-400">
             {stats.gradeBCount}
-            <span className="text-xs font-normal text-zinc-500 ml-1">
+            <span className="text-xs font-normal text-stone-400 ml-1.5 font-sans">
               ({stats.totalInspected > 0 ? gradeBPercent : 0}%)
             </span>
           </div>
-          <div className="mt-2 text-[11px] text-zinc-400">
-            Kantung 3.5 - 6.0mm • Retail harian
+          <div className="mt-2 text-[11px] text-stone-400">
+            Kantung 3.5–6mm • Meja Harian
           </div>
         </div>
 
-        {/* Grade C (Olahan/Bakery) */}
-        <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl relative overflow-hidden">
-          <div className="flex items-center justify-between text-zinc-400 text-xs mb-1">
-            <span>Grade C (Olahan/Bakery)</span>
-            <span className="w-2 h-2 rounded-full bg-amber-400" />
+        {/* Grade C */}
+        <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl relative overflow-hidden">
+          <div className="flex items-center justify-between text-stone-400 text-xs mb-1.5">
+            <span className="font-semibold text-stone-300">Grade C (Olahan)</span>
+            <span className="w-2 h-2 rounded-full bg-orange-400" />
           </div>
-          <div className="text-2xl font-black text-amber-400">
+          <div className="text-2xl sm:text-3xl font-bold font-display text-orange-400">
             {stats.gradeCCount}
-            <span className="text-xs font-normal text-zinc-500 ml-1">
+            <span className="text-xs font-normal text-stone-400 ml-1.5 font-sans">
               ({stats.totalInspected > 0 ? gradeCPercent : 0}%)
             </span>
           </div>
-          <div className="mt-2 text-[11px] text-zinc-400">
-            Kantung 6.0 - 9.0mm • Industri olahan
+          <div className="mt-2 text-[11px] text-stone-400">
+            Kantung 6–9mm • Industri Roti
           </div>
         </div>
 
-        {/* Grade D (Reject) */}
-        <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl relative overflow-hidden">
-          <div className="flex items-center justify-between text-zinc-400 text-xs mb-1">
-            <span>Grade D (REJECT)</span>
-            <AlertOctagon className="w-3.5 h-3.5 text-rose-400" />
+        {/* Grade D */}
+        <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl relative overflow-hidden">
+          <div className="flex items-center justify-between text-stone-400 text-xs mb-1.5">
+            <span className="font-semibold text-stone-300">Grade D (Afkir)</span>
+            <AlertOctagon className="w-3.5 h-3.5 text-red-400" />
           </div>
-          <div className="text-2xl font-black text-rose-400">
+          <div className="text-2xl sm:text-3xl font-bold font-display text-red-400">
             {stats.gradeDCount}
-            <span className="text-xs font-normal text-zinc-500 ml-1">
+            <span className="text-xs font-normal text-stone-400 ml-1.5 font-sans">
               ({stats.totalInspected > 0 ? gradeDPercent : 0}%)
             </span>
           </div>
-          <div className="mt-2 text-[11px] text-rose-400/90 font-medium">
-            Retak rambut / Bintik darah / Rusak
+          <div className="mt-2 text-[11px] text-stone-400">
+            Retak mikro / Bintik darah / Rusak
           </div>
         </div>
       </div>
@@ -174,223 +180,183 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* Visual Distribution Bar & Defect Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Grade Distribution Bar */}
-        <div className="lg:col-span-2 p-5 bg-zinc-900 border border-zinc-800 rounded-2xl space-y-4">
+        <div className="lg:col-span-2 p-5 bg-stone-900 border border-stone-800 rounded-2xl space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-300">
-              Distribusi Klasifikasi Grade Mutu (A - D)
+            <h3 className="text-xs font-bold uppercase tracking-wider text-stone-300 font-mono">
+              Distribusi Mutu Hasil Evaluasi (A – D)
             </h3>
-            <span className="text-xs text-zinc-500 font-mono">
-              Total {stats.totalInspected} butir diperiksa
+            <span className="text-xs text-stone-400 font-mono">
+              {stats.totalInspected} butir diperiksa
             </span>
           </div>
 
           {/* Segmented Progress Bar */}
-          <div className="w-full h-4 bg-zinc-950 rounded-full overflow-hidden flex p-0.5 border border-zinc-800">
+          <div className="w-full h-3.5 bg-stone-950 rounded-full overflow-hidden flex border border-stone-800">
             {stats.gradeACount > 0 && (
               <div
                 style={{ width: `${gradeAPercent}%` }}
-                className="h-full bg-emerald-500 transition-all rounded-l-full"
+                className="h-full bg-emerald-500 transition-all"
                 title={`Grade A: ${gradeAPercent}%`}
               />
             )}
             {stats.gradeBCount > 0 && (
               <div
                 style={{ width: `${gradeBPercent}%` }}
-                className="h-full bg-blue-500 transition-all"
+                className="h-full bg-amber-500 transition-all"
                 title={`Grade B: ${gradeBPercent}%`}
               />
             )}
             {stats.gradeCCount > 0 && (
               <div
                 style={{ width: `${gradeCPercent}%` }}
-                className="h-full bg-amber-500 transition-all"
+                className="h-full bg-orange-500 transition-all"
                 title={`Grade C: ${gradeCPercent}%`}
               />
             )}
             {stats.gradeDCount > 0 && (
               <div
                 style={{ width: `${gradeDPercent}%` }}
-                className="h-full bg-rose-500 transition-all rounded-r-full"
-                title={`Grade D (Reject): ${gradeDPercent}%`}
+                className="h-full bg-red-600 transition-all"
+                title={`Grade D (Afkir): ${gradeDPercent}%`}
               />
             )}
           </div>
 
-          {/* Legend Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-            <div className="p-2.5 bg-zinc-950/60 rounded-xl border border-zinc-800/80">
-              <div className="flex items-center space-x-1.5 text-xs text-zinc-400">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <span>Grade A</span>
-              </div>
-              <div className="text-lg font-bold text-white mt-1">
-                {stats.gradeACount} <span className="text-xs text-zinc-500 font-normal">({gradeAPercent}%)</span>
+          {/* Summary Details */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+            <div className="p-3 bg-stone-950 rounded-xl border border-stone-800/80">
+              <span className="text-xs text-stone-400 block font-medium">Mutu I (Grade A)</span>
+              <div className="text-base font-bold text-stone-100 mt-0.5">
+                {stats.gradeACount} <span className="text-xs text-stone-400 font-normal">({gradeAPercent}%)</span>
               </div>
             </div>
-
-            <div className="p-2.5 bg-zinc-950/60 rounded-xl border border-zinc-800/80">
-              <div className="flex items-center space-x-1.5 text-xs text-zinc-400">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-                <span>Grade B</span>
-              </div>
-              <div className="text-lg font-bold text-white mt-1">
-                {stats.gradeBCount} <span className="text-xs text-zinc-500 font-normal">({gradeBPercent}%)</span>
+            <div className="p-3 bg-stone-950 rounded-xl border border-stone-800/80">
+              <span className="text-xs text-stone-400 block font-medium">Mutu II (Grade B)</span>
+              <div className="text-base font-bold text-stone-100 mt-0.5">
+                {stats.gradeBCount} <span className="text-xs text-stone-400 font-normal">({gradeBPercent}%)</span>
               </div>
             </div>
-
-            <div className="p-2.5 bg-zinc-950/60 rounded-xl border border-zinc-800/80">
-              <div className="flex items-center space-x-1.5 text-xs text-zinc-400">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                <span>Grade C</span>
-              </div>
-              <div className="text-lg font-bold text-white mt-1">
-                {stats.gradeCCount} <span className="text-xs text-zinc-500 font-normal">({gradeCPercent}%)</span>
+            <div className="p-3 bg-stone-950 rounded-xl border border-stone-800/80">
+              <span className="text-xs text-stone-400 block font-medium">Mutu III (Grade C)</span>
+              <div className="text-base font-bold text-stone-100 mt-0.5">
+                {stats.gradeCCount} <span className="text-xs text-stone-400 font-normal">({gradeCPercent}%)</span>
               </div>
             </div>
-
-            <div className="p-2.5 bg-zinc-950/60 rounded-xl border border-zinc-800/80">
-              <div className="flex items-center space-x-1.5 text-xs text-zinc-400">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                <span>Grade D</span>
-              </div>
-              <div className="text-lg font-bold text-white mt-1">
-                {stats.gradeDCount} <span className="text-xs text-zinc-500 font-normal">({gradeDPercent}%)</span>
+            <div className="p-3 bg-stone-950 rounded-xl border border-stone-800/80">
+              <span className="text-xs text-stone-400 block font-medium">Afkir (Grade D)</span>
+              <div className="text-base font-bold text-red-300 mt-0.5">
+                {stats.gradeDCount} <span className="text-xs text-stone-400 font-normal">({gradeDPercent}%)</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Defect Breakdown Card */}
-        <div className="p-5 bg-zinc-900 border border-zinc-800 rounded-2xl space-y-3">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-300 flex items-center space-x-2">
-            <ShieldAlert className="w-4 h-4 text-rose-400" />
-            <span>Deteksi Defect Candling</span>
-          </h3>
-
-          <div className="space-y-2 text-xs">
-            <div className="p-2.5 bg-zinc-950/70 rounded-xl border border-zinc-800 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-rose-400" />
-                <span className="text-zinc-300">Retak Rambut (Hairline crack)</span>
-              </div>
-              <span className="font-bold text-white">{stats.hairlineCrackCount}</span>
-            </div>
-
-            <div className="p-2.5 bg-zinc-950/70 rounded-xl border border-zinc-800 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-red-600" />
-                <span className="text-zinc-300">Bintik Darah (Blood spot)</span>
-              </div>
-              <span className="font-bold text-white">{stats.bloodSpotCount}</span>
-            </div>
-
-            <div className="p-2.5 bg-zinc-950/70 rounded-xl border border-zinc-800 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-amber-400" />
-                <span className="text-zinc-300">Kantung Udara Melebihi Batas</span>
-              </div>
-              <span className="font-bold text-white">{stats.largeAirCellCount}</span>
-            </div>
+        {/* Defect Summary Card */}
+        <div className="p-5 bg-stone-900 border border-stone-800 rounded-2xl space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-stone-300 font-mono">
+              Analisis Cacat Fisik
+            </h3>
+            <span className="text-xs font-bold text-red-400">
+              {stats.defectiveCount} kasus
+            </span>
           </div>
 
-          <div className="pt-2">
-            <button
-              onClick={() => onSwitchTab('dataset')}
-              className="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-xl text-xs font-medium border border-zinc-700 transition-colors flex items-center justify-center space-x-1"
-            >
-              <span>Buka Katalog Data Latih AI</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
+          <div className="space-y-2 text-xs">
+            <div className="flex items-center justify-between p-2.5 bg-stone-950 rounded-xl border border-stone-800/80">
+              <span className="text-stone-400">Retak Rambut (Hairline):</span>
+              <span className="font-semibold text-stone-200">{stats.hairlineCrackCount} butir</span>
+            </div>
+            <div className="flex items-center justify-between p-2.5 bg-stone-950 rounded-xl border border-stone-800/80">
+              <span className="text-stone-400">Noda Darah (Blood Spot):</span>
+              <span className="font-semibold text-stone-200">{stats.bloodSpotCount} butir</span>
+            </div>
+            <div className="flex items-center justify-between p-2.5 bg-stone-950 rounded-xl border border-stone-800/80">
+              <span className="text-stone-400">Rerata Kedalaman Kantung:</span>
+              <span className="font-semibold text-amber-300 font-mono">{stats.avgAirCellDepthMm} mm</span>
+            </div>
+            <div className="flex items-center justify-between p-2.5 bg-stone-950 rounded-xl border border-stone-800/80">
+              <span className="text-stone-400">Tingkat Kelayakan Meja:</span>
+              <span className="font-bold text-emerald-400">
+                {Math.round(((stats.gradeACount + stats.gradeBCount) / total) * 100)}%
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Recent Inspection Table */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg">
-        <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <h3 className="text-sm font-bold text-white">
-              Riwayat Hasil Inspeksi Terkini
+      {/* Recent Inspection Feed Table */}
+      <div className="p-5 bg-stone-900 border border-stone-800 rounded-2xl space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-stone-300 font-mono">
+              Catatan Pemeriksaan Terbaru
             </h3>
-            <span className="px-2 py-0.5 bg-zinc-800 text-zinc-400 rounded-full text-xs font-mono">
-              {items.length} tersimpan
-            </span>
+            <p className="text-xs text-stone-400 mt-0.5">
+              Klik baris untuk membuka rincian evaluasi dan verifikasi ground truth
+            </p>
           </div>
           <button
             onClick={() => onSwitchTab('dataset')}
-            className="text-xs text-rose-400 hover:text-rose-300 font-medium"
+            className="text-xs text-amber-400 hover:text-amber-300 font-medium flex items-center space-x-1"
           >
-            Kelola Semua Data →
+            <span>Buka Katalog Lengkap</span>
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-zinc-950 text-zinc-400 uppercase tracking-wider text-[10px] border-b border-zinc-800">
-              <tr>
-                <th className="py-3 px-4">Citra Candling</th>
-                <th className="py-3 px-4">ID & Waktu</th>
-                <th className="py-3 px-4">Grade Hasil</th>
-                <th className="py-3 px-4">Kantung Udara</th>
-                <th className="py-3 px-4">Cangkang</th>
-                <th className="py-3 px-4">Bobot</th>
-                <th className="py-3 px-4">Data Latih</th>
-                <th className="py-3 px-4 text-right">Aksi</th>
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-stone-800 text-stone-400 font-medium font-mono">
+                <th className="py-2.5 px-3">Sampel</th>
+                <th className="py-2.5 px-3">Waktu</th>
+                <th className="py-2.5 px-3">Keputusan Mutu</th>
+                <th className="py-2.5 px-3">Kantung Udara</th>
+                <th className="py-2.5 px-3">Cangkang</th>
+                <th className="py-2.5 px-3">Mesin AI</th>
+                <th className="py-2.5 px-3 text-right">Verifikasi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/60">
-              {items.slice(0, 8).map((egg) => (
-                <tr key={egg.id} className="hover:bg-zinc-800/40 transition-colors">
-                  <td className="py-2.5 px-4">
-                    <div className="w-10 h-10 rounded-lg bg-black border border-zinc-700 overflow-hidden flex items-center justify-center">
-                      <img src={egg.imageUrl} alt={egg.id} className="w-full h-full object-cover" />
-                    </div>
+            <tbody className="divide-y divide-stone-800/60">
+              {items.slice(0, 7).map((egg) => (
+                <tr
+                  key={egg.id}
+                  onClick={() => onSelectEgg(egg)}
+                  className="hover:bg-stone-800/50 cursor-pointer transition-colors"
+                >
+                  <td className="py-2.5 px-3 flex items-center space-x-2.5">
+                    <img
+                      src={egg.imageUrl}
+                      alt="Candling"
+                      className="w-7 h-7 rounded-lg object-cover bg-black border border-stone-700"
+                    />
+                    <span className="font-mono text-stone-300 font-medium">{egg.id}</span>
                   </td>
-                  <td className="py-2.5 px-4 font-mono">
-                    <div className="font-semibold text-white">{egg.id}</div>
-                    <div className="text-[10px] text-zinc-500">
-                      {new Date(egg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                    </div>
+                  <td className="py-2.5 px-3 text-stone-400 font-mono">
+                    {new Date(egg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                   </td>
-                  <td className="py-2.5 px-4">
-                    <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold inline-block ${
-                      egg.grade === 'Grade AA' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' :
-                      egg.grade === 'Grade A' ? 'bg-green-500/15 text-green-400 border border-green-500/30' :
-                      egg.grade === 'Grade B' ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' :
-                      'bg-rose-500/15 text-rose-400 border border-rose-500/30'
-                    }`}>
-                      {egg.grade}
-                    </span>
+                  <td className="py-2.5 px-3">
+                    <GradeStampBadge grade={egg.grade} size="sm" />
                   </td>
-                  <td className="py-2.5 px-4 font-mono text-zinc-300">
+                  <td className="py-2.5 px-3 font-mono text-stone-300">
                     {egg.airCellDepthMm} mm
                   </td>
-                  <td className="py-2.5 px-4">
-                    <span className={`text-xs ${egg.shellCondition.includes('Retak') ? 'text-rose-400 font-semibold' : 'text-zinc-300'}`}>
-                      {egg.shellCondition}
-                    </span>
+                  <td className="py-2.5 px-3 text-stone-400">
+                    {egg.shellCondition}
                   </td>
-                  <td className="py-2.5 px-4 text-zinc-300">
-                    {egg.estimatedWeightGram}g
+                  <td className="py-2.5 px-3 text-stone-400 font-mono text-[11px]">
+                    {egg.inferenceEngine}
                   </td>
-                  <td className="py-2.5 px-4">
+                  <td className="py-2.5 px-3 text-right">
                     {egg.isGroundTruthVerified ? (
-                      <span className="inline-flex items-center text-[10px] text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded">
-                        Tervalidasi
+                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>Valid</span>
                       </span>
                     ) : (
-                      <span className="inline-flex items-center text-[10px] text-zinc-400 bg-zinc-800 px-2 py-0.5 rounded">
-                        AI Prediksi
-                      </span>
+                      <span className="text-[11px] text-stone-400">Auto-AI</span>
                     )}
-                  </td>
-                  <td className="py-2.5 px-4 text-right">
-                    <button
-                      onClick={() => onSelectEgg(egg)}
-                      className="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded text-xs font-medium transition-colors"
-                    >
-                      Detail
-                    </button>
                   </td>
                 </tr>
               ))}

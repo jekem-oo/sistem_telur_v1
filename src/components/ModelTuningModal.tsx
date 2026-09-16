@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sliders, Check, RotateCcw, ShieldCheck, Zap, Info, Upload, Sparkles, AlertTriangle, Layers } from 'lucide-react';
+import { Sliders, Check, RotateCcw, ShieldCheck, Zap, Info, Upload, Sparkles, AlertTriangle, Layers, X } from 'lucide-react';
 import { ModelTuningConfig, EggInspectionData } from '../types';
 import { DEFAULT_TUNING_CONFIG } from '../utils/cvAnalyzer';
 
@@ -97,264 +97,178 @@ export const ModelTuningModal: React.FC<ModelTuningModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden my-6">
-        {/* Modal Header */}
-        <div className="px-6 py-4 bg-zinc-950 border-b border-zinc-800 flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className="p-2 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-stone-950/85 backdrop-blur-md overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-stone-900 border border-stone-800 rounded-2xl shadow-2xl overflow-hidden my-4 sm:my-8 text-stone-200">
+        {/* Header */}
+        <div className="px-5 sm:px-6 py-4 bg-stone-950 border-b border-stone-800 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-400">
               <Sliders className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white flex items-center space-x-2">
-                <span>Penyetelan & Kalibrasi Model (Tuning Sinar Merah)</span>
-                <span className="px-2 py-0.5 bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded text-[10px] font-mono">
-                  SNI 3926:2008 & Candling CV
-                </span>
+              <h2 className="text-base font-bold text-stone-100 font-display">
+                Kalibrasi Ovoskopi & Parameter Ambang Mutu
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5">
-                Konfigurasi sensitivitas deteksi retak, ambang kantung udara, dan spektrum red-light 630-660nm.
+              <p className="text-xs text-stone-400 mt-0.5">
+                Penyesuaian ambang kantung udara (SNI) & sensitivitas deteksi retak mikro cangkang
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            className="p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-stone-800 transition-colors"
           >
-            ✕
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Content Body */}
-        <div className="p-6 space-y-6 max-h-[72vh] overflow-y-auto">
-          {/* Scientific Info Box */}
-          <div className="p-3.5 bg-rose-950/30 border border-rose-800/40 rounded-xl flex items-start space-x-3 text-xs text-rose-200">
-            <Zap className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+        {/* Body */}
+        <div className="p-5 sm:p-6 space-y-5 max-h-[72vh] overflow-y-auto text-xs">
+          {/* Air Cell Threshold Sliders */}
+          <div className="p-4 bg-stone-950 border border-stone-800 rounded-xl space-y-3">
+            <h4 className="font-semibold text-stone-200 uppercase tracking-wider text-[11px] font-mono">
+              Ambang Batas Kedalaman Kantung Udara (SNI 3926:2008)
+            </h4>
+
+            {/* Grade A Slider */}
             <div className="space-y-1">
-              <span className="font-bold text-white block">Fisika Candling Sinar Merah (Deep Red 630-660nm):</span>
-              <p className="text-zinc-300 leading-relaxed text-[11px]">
-                Panjang gelombang 630-660nm menembus kalsium karbonat cangkang telur dengan hamburan optimal. Celah retak rambut menghasilkan lonjakan kontras tepi (light leakage), sedangkan bintik darah dan kantung udara tampak sebagai gradien penyerapan foton.
-              </p>
-            </div>
-          </div>
-
-          {/* 1. Sensitivitas Deteksi Retak Rambut (Hairline Crack) */}
-          <div className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="text-xs font-bold text-zinc-200 block">
-                  Sensitivitas Deteksi Retak Rambut (Gradient Threshold)
-                </label>
-                <span className="text-[11px] text-zinc-500">
-                  Semakin rendah angka, semakin agresif model menandai micro-crack sebagai Grade D (Reject).
-                </span>
-              </div>
-              <span className="px-2.5 py-1 bg-zinc-900 border border-zinc-700 rounded-lg text-xs font-mono font-bold text-rose-400">
-                {config.crackSensitivity}
-              </span>
-            </div>
-            <input
-              type="range"
-              min="50"
-              max="130"
-              step="5"
-              value={config.crackSensitivity}
-              onChange={(e) => setConfig({ ...config, crackSensitivity: Number(e.target.value) })}
-              className="w-full accent-rose-500 cursor-pointer h-2 bg-zinc-800 rounded-lg"
-            />
-            <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
-              <span>50 (Ultra Sensitif - Lab)</span>
-              <span>85 (Optimal Standar Pabrik)</span>
-              <span>130 (Toleransi Tinggi)</span>
-            </div>
-          </div>
-
-          {/* 2. Ambang Batas Kantung Udara (Air Cell Depth Scale) */}
-          <div className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-4">
-            <div>
-              <label className="text-xs font-bold text-zinc-200 block">
-                Kalibrasi Ambang Batas Kedalaman Kantung Udara (SNI 3926:2008)
-              </label>
-              <span className="text-[11px] text-zinc-500">
-                Tentukan batas kedalaman kantung udara (dalam mm) untuk transisi antar grade.
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {/* Grade A Limit */}
-              <div className="p-3 bg-zinc-900 rounded-lg border border-zinc-800 space-y-1.5">
-                <span className="text-[11px] font-bold text-emerald-400 block">Maks. Grade A (Prima)</span>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="1.5"
-                    max="5.0"
-                    value={config.airCellThresholdA}
-                    onChange={(e) => setConfig({ ...config, airCellThresholdA: Number(e.target.value) })}
-                    className="w-full px-2 py-1 bg-zinc-950 border border-zinc-700 rounded text-xs text-white font-mono"
-                  />
-                  <span className="text-xs text-zinc-400">mm</span>
-                </div>
-                <span className="text-[10px] text-zinc-500 block">Standar: &lt; 3.5 mm</span>
-              </div>
-
-              {/* Grade B Limit */}
-              <div className="p-3 bg-zinc-900 rounded-lg border border-zinc-800 space-y-1.5">
-                <span className="text-[11px] font-bold text-blue-400 block">Maks. Grade B (Segar)</span>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="4.0"
-                    max="8.0"
-                    value={config.airCellThresholdB}
-                    onChange={(e) => setConfig({ ...config, airCellThresholdB: Number(e.target.value) })}
-                    className="w-full px-2 py-1 bg-zinc-950 border border-zinc-700 rounded text-xs text-white font-mono"
-                  />
-                  <span className="text-xs text-zinc-400">mm</span>
-                </div>
-                <span className="text-[10px] text-zinc-500 block">Standar: 3.5 - 6.0 mm</span>
-              </div>
-
-              {/* Grade C Limit */}
-              <div className="p-3 bg-zinc-900 rounded-lg border border-zinc-800 space-y-1.5">
-                <span className="text-[11px] font-bold text-amber-400 block">Maks. Grade C (Olahan)</span>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="6.5"
-                    max="12.0"
-                    value={config.airCellThresholdC}
-                    onChange={(e) => setConfig({ ...config, airCellThresholdC: Number(e.target.value) })}
-                    className="w-full px-2 py-1 bg-zinc-950 border border-zinc-700 rounded text-xs text-white font-mono"
-                  />
-                  <span className="text-xs text-zinc-400">mm</span>
-                </div>
-                <span className="text-[10px] text-zinc-500 block">&gt; {config.airCellThresholdC}mm = Grade D</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 3. Spektrum Sinar Merah & Auto Enhancement */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Wavelength */}
-            <div className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
-              <label className="text-xs font-bold text-zinc-200 block">
-                Panjang Gelombang LED Candler
-              </label>
-              <select
-                value={config.spectralWavelengthNm}
-                onChange={(e) => setConfig({ ...config, spectralWavelengthNm: Number(e.target.value) })}
-                className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-xs text-zinc-200 focus:outline-none"
-              >
-                <option value={630}>630 nm (Merah Terang Standar)</option>
-                <option value={645}>645 nm (Deep Red Optimal Transmisi)</option>
-                <option value={660}>660 nm (Far Red Penetrasi Cangkang Tebal)</option>
-              </select>
-              <span className="text-[10px] text-zinc-500 block">
-                Menyesuaikan koefisien kalibrasi kanal R/G/B kamera.
-              </span>
-            </div>
-
-            {/* Min Confidence Cutoff */}
-            <div className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-zinc-200 block">
-                  Batas Keyakinan AI Min.
-                </label>
-                <span className="text-xs font-bold font-mono text-zinc-300">
-                  {config.minConfidenceThreshold}%
-                </span>
+              <div className="flex justify-between">
+                <span className="text-stone-300">Maksimum Grade A (Mutu I):</span>
+                <span className="font-bold text-emerald-400 font-mono">{config.gradeAMaxAirCellMm} mm</span>
               </div>
               <input
                 type="range"
-                min="60"
-                max="95"
-                step="1"
-                value={config.minConfidenceThreshold}
-                onChange={(e) => setConfig({ ...config, minConfidenceThreshold: Number(e.target.value) })}
-                className="w-full accent-rose-500 cursor-pointer h-2 bg-zinc-800 rounded-lg"
+                min={2}
+                max={5}
+                step={0.1}
+                value={config.gradeAMaxAirCellMm}
+                onChange={(e) => setConfig({ ...config, gradeAMaxAirCellMm: parseFloat(e.target.value) })}
+                className="w-full accent-stone-300"
               />
-              <span className="text-[10px] text-zinc-500 block">
-                Di bawah {config.minConfidenceThreshold}%, model meminta verifikasi ground truth operator.
-              </span>
             </div>
+
+            {/* Grade B Slider */}
+            <div className="space-y-1">
+              <div className="flex justify-between">
+                <span className="text-stone-300">Maksimum Grade B (Mutu II):</span>
+                <span className="font-bold text-amber-400 font-mono">{config.gradeBMaxAirCellMm} mm</span>
+              </div>
+              <input
+                type="range"
+                min={4}
+                max={7}
+                step={0.1}
+                value={config.gradeBMaxAirCellMm}
+                onChange={(e) => setConfig({ ...config, gradeBMaxAirCellMm: parseFloat(e.target.value) })}
+                className="w-full accent-stone-300"
+              />
+            </div>
+
+            {/* Grade C Slider */}
+            <div className="space-y-1">
+              <div className="flex justify-between">
+                <span className="text-stone-300">Maksimum Grade C (Mutu III):</span>
+                <span className="font-bold text-orange-400 font-mono">{config.gradeCMaxAirCellMm} mm</span>
+              </div>
+              <input
+                type="range"
+                min={7}
+                max={10}
+                step={0.1}
+                value={config.gradeCMaxAirCellMm}
+                onChange={(e) => setConfig({ ...config, gradeCMaxAirCellMm: parseFloat(e.target.value) })}
+                className="w-full accent-stone-300"
+              />
+            </div>
+
+            <p className="text-[11px] text-stone-400 pt-1">
+              *Di atas ambang Grade C (&gt;{config.gradeCMaxAirCellMm}mm) otomatis digolongkan sebagai <strong className="text-red-300">Grade D (Afkir)</strong>.
+            </p>
           </div>
 
-          {/* 4. Import User Dataset ("Jika kurang nanti aku juga kasih dataset dari aku") */}
-          <div className="p-4 bg-zinc-950 border border-dashed border-zinc-700/80 rounded-xl space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Upload className="w-4 h-4 text-amber-400" />
-                <h4 className="text-xs font-bold text-zinc-200">
-                  Impor Dataset Telur Tambahan Dari Anda (JSON)
-                </h4>
-              </div>
-              <span className="text-[10px] text-zinc-500">
-                Database saat ini: {datasetCount} butir
-              </span>
-            </div>
-            <p className="text-[11px] text-zinc-400">
-              Punya file dataset gambar atau hasil anotasi telur beriluminasi sinar merah sendiri? Unggah ke sini untuk langsung memperkaya korpus data latih model.
-            </p>
+          {/* Strict Rules */}
+          <div className="p-4 bg-stone-950 border border-stone-800 rounded-xl space-y-3">
+            <h4 className="font-semibold text-stone-200 uppercase tracking-wider text-[11px] font-mono">
+              Ketentuan Mutlak Cacat Cangkang
+            </h4>
 
-            <div className="flex items-center space-x-3 pt-1">
-              <label
-                htmlFor="user-dataset-file-input"
-                className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg text-xs font-medium cursor-pointer border border-zinc-700 transition-colors flex items-center space-x-1.5"
-              >
-                <Upload className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Pilih File Dataset (.json)</span>
-              </label>
+            <label className="flex items-start space-x-2.5 cursor-pointer">
               <input
-                id="user-dataset-file-input"
-                type="file"
-                accept=".json"
-                onChange={handleFileUpload}
-                className="hidden"
+                type="checkbox"
+                checked={config.strictRejectCracks}
+                onChange={(e) => setConfig({ ...config, strictRejectCracks: e.target.checked })}
+                className="mt-0.5 rounded bg-stone-900 border-stone-700 text-stone-300 focus:ring-0"
               />
-              {importStatus && (
-                <span className="text-xs text-amber-400 font-medium">
-                  {importStatus}
+              <div>
+                <span className="font-medium text-stone-200 block">Afkir Mutlak Retak Rambut (Hairline Crack)</span>
+                <span className="text-[11px] text-stone-400">
+                  Jika terdeteksi retakan mikro tembus sinar, telur langsung dilabeli Grade D terlepas dari kesegaran kuning telur.
                 </span>
-              )}
-            </div>
+              </div>
+            </label>
+
+            <label className="flex items-start space-x-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={config.strictRejectBlood}
+                onChange={(e) => setConfig({ ...config, strictRejectBlood: e.target.checked })}
+                className="mt-0.5 rounded bg-stone-900 border-stone-700 text-stone-300 focus:ring-0"
+              />
+              <div>
+                <span className="font-medium text-stone-200 block">Afkir Mutlak Noda Darah / Meat Spot</span>
+                <span className="text-[11px] text-stone-400">
+                  Inklusi bintik darah langsung didiskualifikasi dari konsumsi meja.
+                </span>
+              </div>
+            </label>
+          </div>
+
+          {/* Import User Dataset JSON */}
+          <div className="p-4 bg-stone-950 border border-stone-800 rounded-xl space-y-2">
+            <h4 className="font-semibold text-stone-200 uppercase tracking-wider text-[11px] font-mono">
+              Impor Dataset Tambahan (.json)
+            </h4>
+            <p className="text-[11px] text-stone-400">
+              Muat data anotasi telur pengguna sebelumnya untuk memperluas riwayat.
+            </p>
+            <label className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-lg cursor-pointer transition-colors">
+              <Upload className="w-3.5 h-3.5" />
+              <span>Pilih Berkas JSON</span>
+              <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
+            </label>
+            {importStatus && (
+              <p className="text-[11px] text-amber-300 mt-1">{importStatus}</p>
+            )}
           </div>
         </div>
 
-        {/* Modal Footer Controls */}
-        <div className="px-6 py-4 bg-zinc-950 border-t border-zinc-800 flex items-center justify-between">
+        {/* Footer */}
+        <div className="px-5 sm:px-6 py-3.5 bg-stone-950 border-t border-stone-800 flex items-center justify-between text-xs">
           <button
             onClick={handleReset}
-            className="px-3.5 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-xl text-xs font-medium border border-zinc-800 transition-colors flex items-center space-x-1.5"
+            className="px-3.5 py-2 text-stone-400 hover:text-stone-200 flex items-center space-x-1.5 transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset Standar SNI</span>
           </button>
-
-          <div className="flex items-center space-x-2">
+          <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 rounded-xl text-xs font-medium border border-zinc-800 transition-colors"
+              className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded-xl font-medium"
             >
               Batal
             </button>
             <button
               onClick={handleSave}
-              className="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-rose-950/40 transition-all flex items-center space-x-1.5"
+              className="px-5 py-2 bg-stone-100 hover:bg-white text-stone-900 font-bold rounded-xl transition-all shadow-sm flex items-center space-x-1.5"
             >
               {saveSuccess ? (
                 <>
-                  <Check className="w-4 h-4 text-emerald-300" />
-                  <span>Tuning Diterapkan!</span>
+                  <Check className="w-4 h-4 text-emerald-600" />
+                  <span>Tersimpan</span>
                 </>
               ) : (
-                <>
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>Terapkan Tuning Model</span>
-                </>
+                <span>Terapkan Kalibrasi</span>
               )}
             </button>
           </div>
