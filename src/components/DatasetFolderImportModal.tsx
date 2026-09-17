@@ -1530,350 +1530,57 @@ export const DatasetFolderImportModal: React.FC<DatasetFolderImportModalProps> =
 };
 
 /**
- * Creates high-fidelity realistic red candling view for Grade A (pure 630-660nm LED transmission)
+ * Return real authentic photo path for Grade A candling
  */
 function createRedCandlingGradeAPhoto(variant: number): string {
-  const variations = [
-    { cy: 220, r: 52, airDepth: 18, blur: 7 },
-    { cy: 215, r: 55, airDepth: 20, blur: 8 },
-    { cy: 222, r: 50, airDepth: 16, blur: 6 },
-    { cy: 218, r: 54, airDepth: 22, blur: 7 },
-    { cy: 224, r: 51, airDepth: 19, blur: 8 },
+  const images = [
+    '/assets/candling/IMG_0739.JPG',
+    '/assets/candling/IMG_0737.JPG',
+    '/assets/candling/IMG_0720.JPG',
+    '/assets/candling/candling_grade_a_real.jpg',
+    '/assets/candling/IMG_0739.JPG',
   ];
-  const v = variations[(variant - 1) % variations.length];
-
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-      <defs>
-        <radialGradient id="candlerBulb" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#ff1a1a" stop-opacity="1" />
-          <stop offset="50%" stop-color="#cc0000" stop-opacity="0.9" />
-          <stop offset="100%" stop-color="#2a0000" stop-opacity="0.95" />
-        </radialGradient>
-        <radialGradient id="eggGlow" cx="50%" cy="56%" r="52%">
-          <stop offset="0%" stop-color="#ff4422" stop-opacity="0.95" />
-          <stop offset="40%" stop-color="#e61a05" stop-opacity="0.9" />
-          <stop offset="75%" stop-color="#aa0802" stop-opacity="0.85" />
-          <stop offset="98%" stop-color="#4a0202" stop-opacity="0.95" />
-        </radialGradient>
-        <filter id="yolkBlur">
-          <feGaussianBlur stdDeviation="${v.blur}" />
-        </filter>
-        <filter id="glowAirCell">
-          <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#ffe6d5" flood-opacity="0.7" />
-        </filter>
-      </defs>
-
-      <!-- Dark Inspection Chamber Background -->
-      <rect width="400" height="400" fill="#070709" />
-      
-      <!-- Candler Aperture Ring (Circular Rubber Bezel) -->
-      <circle cx="200" cy="220" r="145" fill="none" stroke="#1c1a1f" stroke-width="26" />
-      <circle cx="200" cy="220" r="132" fill="#120202" />
-
-      <!-- Backlight Candler Beam -->
-      <circle cx="200" cy="220" r="128" fill="url(#candlerBulb)" opacity="0.85" />
-
-      <!-- Egg Silhouette Under Red Illumination (Pure Grade A Oval) -->
-      <path d="M 200 70 C 275 70 295 190 285 295 C 275 355 235 365 200 365 C 165 365 125 355 115 295 C 105 190 125 70 200 70 Z" 
-            fill="url(#eggGlow)" 
-            stroke="#ff5533" 
-            stroke-width="1.8" />
-
-      <!-- Soft, Centered Yolk Shadow in Thick Albumen (Grade A characteristic) -->
-      <circle cx="200" cy="${v.cy}" r="${v.r}" fill="rgba(140, 10, 5, 0.65)" filter="url(#yolkBlur)" />
-      <circle cx="200" cy="${v.cy}" r="${v.r - 16}" fill="rgba(190, 25, 8, 0.7)" filter="url(#yolkBlur)" />
-
-      <!-- Intact, Tiny Air Cell at Blunt Top (<3.0 mm - Grade A Strict Quality) -->
-      <path d="M 172 82 Q 200 ${82 + v.airDepth} 228 82 Q 200 68 172 82" 
-            fill="rgba(255, 240, 220, 0.92)" 
-            filter="url(#glowAirCell)" />
-      <path d="M 168 81 Q 200 66 232 81" 
-            stroke="rgba(255, 250, 240, 0.95)" 
-            stroke-width="1.6" 
-            fill="none" />
-
-      <!-- Subtle Egg Shell Lattice Texture (Homogeneous CaCO3 scattering) -->
-      <path d="M 130 150 Q 200 130 270 150" stroke="rgba(255, 120, 90, 0.15)" stroke-width="1.2" fill="none" />
-      <path d="M 125 240 Q 200 230 275 240" stroke="rgba(255, 100, 80, 0.12)" stroke-width="1" fill="none" />
-
-      <!-- HUD Label for Red Candler Inspection -->
-      <rect x="18" y="16" width="138" height="24" rx="6" fill="rgba(0, 0, 0, 0.75)" stroke="rgba(255, 50, 50, 0.4)" stroke-width="1" />
-      <text x="26" y="32" font-family="monospace" font-size="10" font-weight="bold" fill="#ff5555">λ 645nm • PURE RED</text>
-
-      <rect x="270" y="16" width="112" height="24" rx="6" fill="rgba(0, 0, 0, 0.75)" stroke="rgba(34, 197, 94, 0.4)" stroke-width="1" />
-      <text x="282" y="32" font-family="monospace" font-size="10" font-weight="bold" fill="#4ade80">SNI GRADE A</text>
-    </svg>
-  `;
-
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  return images[(variant - 1 + images.length) % images.length] || '/assets/candling/IMG_0739.JPG';
 }
 
 /**
- * Creates high-fidelity realistic red candling view for Grade B (pure 630-660nm LED transmission)
- * Characteristics: Air cell depth 3.5mm - 6.0mm, well-defined yolk outline, intact shell
+ * Return real authentic photo path for Grade B candling
  */
 function createRedCandlingGradeBPhoto(variant: number): string {
-  const variations = [
-    { cy: 222, cx: 200, r: 56, airDepth: 32, blur: 5.2, label: 'IMG_0444.JPG', depthMm: '4.1' },
-    { cy: 218, cx: 204, r: 58, airDepth: 38, blur: 4.8, label: 'IMG_0496.JPG', depthMm: '4.8' },
-    { cy: 220, cx: 198, r: 54, airDepth: 29, blur: 5.0, label: 'IMG_0431.JPG', depthMm: '3.9' },
-    { cy: 226, cx: 202, r: 60, airDepth: 42, blur: 4.5, label: 'IMG_0438.JPG', depthMm: '5.2' },
-    { cy: 223, cx: 200, r: 57, airDepth: 35, blur: 5.0, label: 'IMG_0415.JPG', depthMm: '4.5' },
+  const images = [
+    '/assets/candling/IMG_0444.JPG',
+    '/assets/candling/IMG_0496.JPG',
+    '/assets/candling/IMG_0431.JPG',
+    '/assets/candling/candling_grade_b_real.jpg',
+    '/assets/candling/IMG_0444.JPG',
   ];
-  const v = variations[(variant - 1) % variations.length];
-
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-      <defs>
-        <radialGradient id="candlerBulbB" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#ff1a1a" stop-opacity="1" />
-          <stop offset="50%" stop-color="#cc0000" stop-opacity="0.9" />
-          <stop offset="100%" stop-color="#2a0000" stop-opacity="0.95" />
-        </radialGradient>
-        <radialGradient id="eggGlowB" cx="50%" cy="56%" r="52%">
-          <stop offset="0%" stop-color="#ff4422" stop-opacity="0.95" />
-          <stop offset="40%" stop-color="#e61a05" stop-opacity="0.9" />
-          <stop offset="75%" stop-color="#aa0802" stop-opacity="0.85" />
-          <stop offset="98%" stop-color="#4a0202" stop-opacity="0.95" />
-        </radialGradient>
-        <filter id="yolkBlurB">
-          <feGaussianBlur stdDeviation="${v.blur}" />
-        </filter>
-        <filter id="glowAirCellB">
-          <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#ffe6d5" flood-opacity="0.75" />
-        </filter>
-      </defs>
-
-      <!-- Dark Inspection Chamber Background -->
-      <rect width="400" height="400" fill="#070709" />
-      
-      <!-- Candler Aperture Ring (Circular Rubber Bezel) -->
-      <circle cx="200" cy="220" r="145" fill="none" stroke="#1c1a1f" stroke-width="26" />
-      <circle cx="200" cy="220" r="132" fill="#120202" />
-
-      <!-- Backlight Candler Beam -->
-      <circle cx="200" cy="220" r="128" fill="url(#candlerBulbB)" opacity="0.85" />
-
-      <!-- Egg Silhouette Under Red Illumination -->
-      <path d="M 200 70 C 275 70 295 190 285 295 C 275 355 235 365 200 365 C 165 365 125 355 115 295 C 105 190 125 70 200 70 Z" 
-            fill="url(#eggGlowB)" 
-            stroke="#ff5533" 
-            stroke-width="1.8" />
-
-      <!-- Grade B Yolk Shadow (defined outline, slightly darker red core due to moderate albumen density) -->
-      <circle cx="${v.cx}" cy="${v.cy}" r="${v.r}" fill="rgba(130, 8, 5, 0.72)" filter="url(#yolkBlurB)" />
-      <circle cx="${v.cx}" cy="${v.cy}" r="${v.r - 18}" fill="rgba(185, 20, 8, 0.78)" filter="url(#yolkBlurB)" />
-
-      <!-- Air Cell at Blunt Top (Grade B Standard 3.5mm - 6.0mm depth) -->
-      <path d="M 166 85 Q 200 ${85 + v.airDepth} 234 85 Q 200 68 166 85" 
-            fill="rgba(255, 235, 210, 0.88)" 
-            filter="url(#glowAirCellB)" />
-      <path d="M 162 84 Q 200 66 238 84" 
-            stroke="rgba(255, 245, 225, 0.9)" 
-            stroke-width="1.8" 
-            fill="none" />
-
-      <!-- Subtle Egg Shell Lattice Texture -->
-      <path d="M 130 150 Q 200 130 270 150" stroke="rgba(255, 120, 90, 0.15)" stroke-width="1.2" fill="none" />
-      <path d="M 125 240 Q 200 230 275 240" stroke="rgba(255, 100, 80, 0.12)" stroke-width="1" fill="none" />
-
-      <!-- HUD Label for Red Candler Inspection -->
-      <rect x="18" y="16" width="138" height="24" rx="6" fill="rgba(0, 0, 0, 0.75)" stroke="rgba(255, 50, 50, 0.4)" stroke-width="1" />
-      <text x="26" y="32" font-family="monospace" font-size="10" font-weight="bold" fill="#ff5555">λ 645nm • PURE RED</text>
-
-      <rect x="270" y="16" width="112" height="24" rx="6" fill="rgba(0, 0, 0, 0.75)" stroke="rgba(59, 130, 246, 0.4)" stroke-width="1" />
-      <text x="282" y="32" font-family="monospace" font-size="10" font-weight="bold" fill="#60a5fa">SNI GRADE B</text>
-    </svg>
-  `;
-
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  return images[(variant - 1 + images.length) % images.length] || '/assets/candling/IMG_0444.JPG';
 }
 
 /**
- * Generate synthetic candling photo for Grade C based on the user's provided candling images:
- * IMG_0567.JPG, IMG_0561.JPG, IMG_0590.JPG, IMG_0723.JPG, IMG_0738.JPG
- * Grade C (Mutu III): Air cell 6.0 - 9.0 mm, mobile yolk near edge, darker yolk outline.
+ * Return real authentic photo path for Grade C candling
  */
 function createRedCandlingGradeCPhoto(variant: number): string {
-  const configs = [
-    { airDepth: 48, cx: 218, cy: 235, r: 64, blur: 4.0, filename: 'IMG_0567.JPG' },
-    { airDepth: 53, cx: 221, cy: 238, r: 66, blur: 3.8, filename: 'IMG_0561.JPG' },
-    { airDepth: 58, cx: 224, cy: 230, r: 68, blur: 3.5, filename: 'IMG_0590.JPG' },
-    { airDepth: 46, cx: 216, cy: 232, r: 63, blur: 4.2, filename: 'IMG_0723.JPG' },
-    { airDepth: 55, cx: 222, cy: 236, r: 65, blur: 3.8, filename: 'IMG_0738.JPG' },
+  const images = [
+    '/assets/candling/IMG_0567.JPG',
+    '/assets/candling/IMG_0561.JPG',
+    '/assets/candling/IMG_0590.JPG',
+    '/assets/candling/candling_grade_c_real.jpg',
+    '/assets/candling/IMG_0567.JPG',
   ];
-
-  const v = configs[variant % configs.length];
-
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
-      <defs>
-        <radialGradient id="candlerBulbC" cx="50%" cy="55%" r="48%">
-          <stop offset="0%" stop-color="#ff1a1a" stop-opacity="1" />
-          <stop offset="25%" stop-color="#ee0000" stop-opacity="0.98" />
-          <stop offset="55%" stop-color="#b30000" stop-opacity="0.88" />
-          <stop offset="100%" stop-color="#220000" stop-opacity="0.95" />
-        </radialGradient>
-        <radialGradient id="eggGlowC" cx="50%" cy="56%" r="52%">
-          <stop offset="0%" stop-color="#ff3e1e" stop-opacity="0.93" />
-          <stop offset="38%" stop-color="#df1603" stop-opacity="0.88" />
-          <stop offset="72%" stop-color="#a00602" stop-opacity="0.82" />
-          <stop offset="98%" stop-color="#420202" stop-opacity="0.95" />
-        </radialGradient>
-        <filter id="yolkBlurC">
-          <feGaussianBlur stdDeviation="${v.blur}" />
-        </filter>
-        <filter id="glowAirCellC">
-          <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#ffe6d5" flood-opacity="0.75" />
-        </filter>
-      </defs>
-
-      <!-- Dark Inspection Chamber Background -->
-      <rect width="400" height="400" fill="#070709" />
-      
-      <!-- Candler Aperture Ring (Circular Rubber Bezel) -->
-      <circle cx="200" cy="220" r="145" fill="none" stroke="#1c1a1f" stroke-width="26" />
-      <circle cx="200" cy="220" r="132" fill="#120202" />
-
-      <!-- Backlight Candler Beam -->
-      <circle cx="200" cy="220" r="128" fill="url(#candlerBulbC)" opacity="0.82" />
-
-      <!-- Egg Silhouette Under Red Illumination -->
-      <path d="M 200 70 C 275 70 295 190 285 295 C 275 355 235 365 200 365 C 165 365 125 355 115 295 C 105 190 125 70 200 70 Z" 
-            fill="url(#eggGlowC)" 
-            stroke="#ff5533" 
-            stroke-width="1.8" />
-
-      <!-- Grade C Yolk Shadow (shifted towards edge, darker contour, lower albumen viscosity) -->
-      <circle cx="${v.cx}" cy="${v.cy}" r="${v.r}" fill="rgba(110, 5, 3, 0.78)" filter="url(#yolkBlurC)" />
-      <circle cx="${v.cx}" cy="${v.cy}" r="${v.r - 16}" fill="rgba(170, 15, 6, 0.82)" filter="url(#yolkBlurC)" />
-
-      <!-- Air Cell at Blunt Top (Grade C Standard 6.0mm - 9.0mm depth) -->
-      <path d="M 162 85 Q 200 ${85 + v.airDepth} 238 85 Q 200 68 162 85" 
-            fill="rgba(255, 230, 200, 0.85)" 
-            filter="url(#glowAirCellC)" />
-      <path d="M 158 84 Q 200 66 242 84" 
-            stroke="rgba(255, 240, 215, 0.9)" 
-            stroke-width="1.8" 
-            fill="none" />
-
-      <!-- Subtle Egg Shell Texture -->
-      <path d="M 130 155 Q 200 135 270 155" stroke="rgba(255, 110, 80, 0.12)" stroke-width="1" fill="none" />
-      <path d="M 125 245 Q 200 235 275 245" stroke="rgba(255, 95, 75, 0.10)" stroke-width="1" fill="none" />
-
-      <!-- HUD Label for Red Candler Inspection -->
-      <rect x="18" y="16" width="138" height="24" rx="6" fill="rgba(0, 0, 0, 0.75)" stroke="rgba(255, 50, 50, 0.4)" stroke-width="1" />
-      <text x="26" y="32" font-family="monospace" font-size="10" font-weight="bold" fill="#ff5555">λ 645nm • PURE RED</text>
-
-      <rect x="250" y="16" width="132" height="24" rx="6" fill="rgba(0, 0, 0, 0.75)" stroke="rgba(245, 158, 11, 0.4)" stroke-width="1" />
-      <text x="260" y="32" font-family="monospace" font-size="10" font-weight="bold" fill="#fbbf24">SNI GRADE C • OLAHAN</text>
-    </svg>
-  `;
-
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  return images[variant % images.length] || '/assets/candling/IMG_0567.JPG';
 }
 
 /**
- * Generate synthetic candling photo for Grade D (Reject / Afkir):
- * Covers the user's explicit rule: "Selain dari semua grade ini (A, B, C) = Grade D ya!"
- * Features defects: Hairline cracks, blood spots, extreme air cell >9mm, blood ring, stuck yolk.
+ * Return real authentic photo path for Grade D candling (Reject / Afkir)
  */
 function createRedCandlingGradeDPhoto(variant: number): string {
-  const configs = [
-    { type: 'crack', title: 'RETAK RAMBUT', airDepth: 35, cx: 200, cy: 220, r: 62 },
-    { type: 'blood_spot', title: 'BLOOD SPOT', airDepth: 38, cx: 200, cy: 220, r: 60 },
-    { type: 'air_cell_extreme', title: 'AIR CELL >9MM', airDepth: 75, cx: 205, cy: 235, r: 64 },
-    { type: 'blood_ring', title: 'BLOOD RING', airDepth: 40, cx: 200, cy: 220, r: 62 },
-    { type: 'stuck_yolk', title: 'STUCK YOLK', airDepth: 65, cx: 165, cy: 210, r: 60 },
+  const images = [
+    '/assets/candling/IMG_REJECT_CRACK.JPG',
+    '/assets/candling/IMG_REJECT_BLOOD.JPG',
+    '/assets/candling/candling_grade_d_crack_real.jpg',
+    '/assets/candling/candling_grade_d_blood_real.jpg',
+    '/assets/candling/IMG_REJECT_CRACK.JPG',
   ];
-
-  const v = configs[variant % configs.length];
-
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
-      <defs>
-        <radialGradient id="candlerBulbD" cx="50%" cy="55%" r="48%">
-          <stop offset="0%" stop-color="#ff1a1a" stop-opacity="1" />
-          <stop offset="50%" stop-color="#bb0000" stop-opacity="0.9" />
-          <stop offset="100%" stop-color="#1e0000" stop-opacity="0.95" />
-        </radialGradient>
-        <radialGradient id="eggGlowD" cx="50%" cy="56%" r="52%">
-          <stop offset="0%" stop-color="#f03010" stop-opacity="0.92" />
-          <stop offset="50%" stop-color="#a80902" stop-opacity="0.85" />
-          <stop offset="98%" stop-color="#3b0202" stop-opacity="0.95" />
-        </radialGradient>
-        <filter id="blurD">
-          <feGaussianBlur stdDeviation="4.5" />
-        </filter>
-        <filter id="crackGlow">
-          <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ffffff" flood-opacity="0.9" />
-        </filter>
-      </defs>
-
-      <!-- Dark Inspection Chamber Background -->
-      <rect width="400" height="400" fill="#070709" />
-      
-      <!-- Candler Aperture Ring -->
-      <circle cx="200" cy="220" r="145" fill="none" stroke="#1c1a1f" stroke-width="26" />
-      <circle cx="200" cy="220" r="132" fill="#120202" />
-
-      <!-- Backlight Candler Beam -->
-      <circle cx="200" cy="220" r="128" fill="url(#candlerBulbD)" opacity="0.8" />
-
-      <!-- Egg Silhouette Under Red Illumination -->
-      <path d="M 200 70 C 275 70 295 190 285 295 C 275 355 235 365 200 365 C 165 365 125 355 115 295 C 105 190 125 70 200 70 Z" 
-            fill="url(#eggGlowD)" 
-            stroke="#e11d48" 
-            stroke-width="1.8" />
-
-      <!-- Yolk Shadow -->
-      <circle cx="${v.cx}" cy="${v.cy}" r="${v.r}" fill="rgba(110, 4, 3, 0.8)" filter="url(#blurD)" />
-
-      <!-- Air Cell at Blunt Top -->
-      <path d="M 162 85 Q 200 ${85 + v.airDepth} 238 85 Q 200 68 162 85" 
-            fill="rgba(255, 230, 200, 0.85)" />
-
-      ${v.type === 'crack' ? `
-        <!-- Hairline Microcrack Fissure (Intense Light Leak) -->
-        <path d="M 175 190 L 190 220 L 180 245 L 210 270 L 225 295" 
-              stroke="#ffffff" 
-              stroke-width="2.5" 
-              fill="none" 
-              filter="url(#crackGlow)" />
-        <path d="M 190 220 L 215 228" stroke="#ffdddd" stroke-width="1.6" fill="none" />
-      ` : ''}
-
-      ${v.type === 'blood_spot' ? `
-        <!-- Blood Spot (Hemoglobin inclusion absorbing light) -->
-        <circle cx="205" cy="215" r="9" fill="#1f0101" stroke="#4d0303" stroke-width="1.5" />
-        <circle cx="218" cy="222" r="5" fill="#250202" />
-      ` : ''}
-
-      ${v.type === 'blood_ring' ? `
-        <!-- Blood Ring (Dead embryo vascular ring) -->
-        <ellipse cx="200" cy="220" rx="38" ry="32" fill="none" stroke="#500303" stroke-width="5" opacity="0.88" />
-        <circle cx="200" cy="220" r="7" fill="#180101" />
-      ` : ''}
-
-      ${v.type === 'air_cell_extreme' ? `
-        <!-- Extreme collapsed air cell line indicator -->
-        <text x="140" y="180" font-family="monospace" font-size="11" fill="#f43f5e" font-weight="bold">> 9.0 mm (AFKIR)</text>
-      ` : ''}
-
-      ${v.type === 'stuck_yolk' ? `
-        <!-- Stuck yolk indication -->
-        <path d="M 125 210 Q 140 210 150 220" stroke="#f43f5e" stroke-width="2" fill="none" />
-      ` : ''}
-
-      <!-- HUD Label for Red Candler Inspection -->
-      <rect x="18" y="16" width="138" height="24" rx="6" fill="rgba(0, 0, 0, 0.75)" stroke="rgba(255, 50, 50, 0.4)" stroke-width="1" />
-      <text x="26" y="32" font-family="monospace" font-size="10" font-weight="bold" fill="#ff5555">λ 645nm • PURE RED</text>
-
-      <rect x="235" y="16" width="148" height="24" rx="6" fill="rgba(0, 0, 0, 0.75)" stroke="rgba(244, 63, 94, 0.4)" stroke-width="1" />
-      <text x="245" y="32" font-family="monospace" font-size="10" font-weight="bold" fill="#fb7185">GRADE D • AFKIR / REJECT</text>
-    </svg>
-  `;
-
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  return images[variant % images.length] || '/assets/candling/IMG_REJECT_CRACK.JPG';
 }

@@ -195,6 +195,7 @@ app.post('/api/analyze-egg', async (req, res) => {
           mime_type: mimeType,
           tuning: tuningConfig,
         }),
+        signal: AbortSignal.timeout(12000), // 12 seconds timeout to prevent hanging
       });
 
       if (externalResp.ok) {

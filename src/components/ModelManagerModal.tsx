@@ -381,6 +381,32 @@ export const ModelManagerModal: React.FC<ModelManagerModalProps> = ({
                 </div>
               )}
 
+              {/* Format Request & Response Guidance */}
+              <div className="p-3 bg-stone-900/80 border border-stone-800 rounded-xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-stone-200 text-[11px] flex items-center space-x-1.5">
+                    <FileCode className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Spesifikasi JSON Request & Response Server Model</span>
+                  </span>
+                  <span className="text-[10px] text-emerald-400 font-mono">Format Standar Ovoskopi</span>
+                </div>
+                <div className="text-[11px] text-stone-400 space-y-1">
+                  <p>Model server temanmu hanya perlu menerima POST JSON berikut:</p>
+                  <pre className="p-2 bg-stone-950 rounded-lg text-[10px] font-mono text-stone-300 overflow-x-auto border border-stone-800/80">
+{`// Payload yang dikirim sistem:
+{ "image_base64": "<string_base64>", "mime_type": "image/jpeg" }
+
+// Response yang dikembalikan model temanmu:
+{
+  "grade": "Grade A", // Pilihan: "Grade A", "Grade B", "Grade C", "Grade D"
+  "confidence": 97,
+  "airCellDepthMm": 2.8,
+  "defects": []
+}`}
+                  </pre>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-stone-400 mb-1 font-medium">Peneliti / Pemilik Model</label>

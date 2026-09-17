@@ -175,8 +175,22 @@ export default function App() {
         const res = await fetch('/api/dataset');
         if (res.ok) {
           const json = await res.json();
+          // Check if server data exists and isn't legacy SVG
           if (json.data && json.data.length > 0) {
-            setDataset(json.data);
+            const hasLegacySvg = json.data.some((d: EggInspectionData) => d.imageUrl && d.imageUrl.startsWith('data:image/svg+xml'));
+            if (hasLegacySvg) {
+              // Update with authentic real photos
+              setDataset(SAMPLE_EGGS);
+              SAMPLE_EGGS.forEach((egg) => {
+                fetch('/api/dataset', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(egg),
+                }).catch(() => {});
+              });
+            } else {
+              setDataset(json.data);
+            }
           } else {
             // Seed initial sample eggs to server database
             SAMPLE_EGGS.forEach((egg) => {
